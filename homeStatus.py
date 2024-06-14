@@ -30,9 +30,13 @@ USERS = {
 
 
 ########################## DEFINE METHODS ######################################
+@app.route('/health')
+def getHealth():
+	return 'HomeStatus service is running'
+	
+
 @app.route('/status/<int:userNumber>/')
 def getStatus(userNumber=4):
-	print(userNumber)
 	if userNumber in USERS:
 		return USERS[userNumber].value
 	
@@ -48,17 +52,12 @@ def setStatus(userNumber, status):
 	if userNumber not in USERS:
 		return 'ERROR'
 
-	print(USERS[userNumber].value)
-	print("STATUS", status, Status[status] in Status)
-
 	if Status[status] in Status:
-		print(Status[status])
 		USERS[userNumber] = Status[status]
 
-	print(USERS[userNumber].value)
 	return 'OK'
 
 
 ########################## START APP ######################################
 if __name__ == '__main__':
-	app.run()
+	app.run(host='0.0.0.0')

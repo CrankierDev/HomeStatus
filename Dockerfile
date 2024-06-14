@@ -1,20 +1,14 @@
-FROM python:3.10-slim as compiler
-ENV PYTHONUNBUFFERED 1
+FROM python:3.10-alpine
 
-WORKDIR /opt/HomeStatus/
+RUN pip install --upgrade pip
 
-RUN python -m venv /opt/HomeStatus/venv
-# Enable venv
-ENV PATH="/opt/HomeStatus/venv/bin:$PATH"
+WORKDIR /opt/HomeStatusDocker
+COPY . /opt/HomeStatusDocker
 
-COPY ./requirements.txt /opt/HomeStatus/requirements.txt
-RUN pip install -Ur requirements.txt
+RUN python -m venv /opt/HomeStatusDocker/venv
+RUN source /opt/HomeStatusDocker/venv/bin/activate
+RUN pip install -r requirements.txt
 
-FROM python:3.10-slim as runner
-WORKDIR /opt/HomeStatus/
-COPY --from=compiler /opt/HomeStatus/venv /opt/HomeStatus/venv
-
-# Enable venv
-ENV PATH="/opt/HomeStatus/venv/bin:$PATH"
-COPY . /opt/HomeStatus/
-CMD ["python", "“availabilityWS.py", ]
+ENV PYTHONUNBUFFERED=1
+EXPOSE 5000
+CMD python homeStatus.py
